@@ -1,68 +1,64 @@
-import kagglehub
-import shutil
 import pandas as pd
+import matplotlib
 import matplotlib.pyplot as plt
+matplotlib.use('TkAgg')
 
-# Download latest version
-#path = kagglehub.dataset_download("muharremg/dataset-demand-forecasting")
+Data = pd.read_csv('DataSet/test.csv')
 
-#print("Path to dataset files:", path)
+Data.set_index('id', inplace=True)
 
-# Destination = 'DataSet/'
+Data['date'] = pd.to_datetime(Data['date'])
 
-#shutil.copytree(path, Destination, dirs_exist_ok=True)
+Data['month_day'] = Data['date'].dt.month.astype(str).str.zfill(2) + '-' + Data['date'].dt.day.astype(str).str.zfill(2)
 
-#print(f"Dataset copied to: {Destination}")
+Data['day_of_week'] = Data['date'].dt.dayofweek
 
-# Data = pd.read_csv('DataSet/test.csv')
+Data['month'] = Data['date'].dt.month
+
+Data['year'] = Data['date'].dt.year
+
+Data['is_weekend'] = (Data['day_of_week'] >= 5).astype(int)
 #
-Data_2 = pd.read_csv('DataSet/train.csv')
-
-print(Data_2.head())
+# print("Shape of dataset:", Data.shape)
 #
-# Data.set_index('id', inplace=True)
+# print("Dataset info:\n", Data.info())
 #
-# Data['date'] = pd.to_datetime(Data['date'])
+# print("Descriptive statistics:\n", Data.describe())
 #
-# Data['date'] = Data['date'].dt.month.astype(str).str.zfill(2) + '-' + Data['date'].dt.day.astype(str).str.zfill(2)
+# print("Missing values per column:\n", Data.isnull().sum())
+
+store_counts = Data['store'].value_counts()
+
+item_counts = Data['item'].value_counts()
+
+# print("Count of records per store:\n", store_counts)
 #
-# print(Data.shape)
-#
-# print(Data.head())
+# print("Count of records per item:\n", item_counts)
 
-
-train = pd.read_csv('Dataset/train.csv')
-
-train.set_index(keys='id', inplace=True)
-
-train['date'] = pd.to_datetime(train['date'])
-
-train['month_day'] = train['date'].dt.month.astype(str).str.zfill(2) + '-' + train['date'].dt.day.astype(str).str.zfill(2)
-
-train['day_of_week'] = train['date'].dt.dayofweek
-train['month'] = train['date'].dt.month
-train['year'] = train['date'].dt.year
-train['is_weekend'] = (train['day_of_week'] >= 5).astype(int)
-
-print("شکل دیتاست:", train.shape)
-print("اطلاعات دیتاست:\n", train.info())
-print("آمار توصیفی:\n", train.describe())
-print("مقدار خالی در هر ستون:\n", train.isnull().sum())
-
-item_sales_mean = train.groupby('item')['sales'].mean()
-print("میانگین فروش بر اساس item:\n", item_sales_mean.head())
 plt.figure(figsize=(10, 6))
-plt.hist(train['sales'], bins=50, color='skyblue')
-plt.title('توزیع فروش')
-plt.xlabel('فروش')
-plt.ylabel('تعداد')
-plt.show()
 
+store_counts.plot(kind='bar', color='skyblue')
 
-plt.figure(figsize=(12, 6))
-item_sales_mean.plot(kind='bar')
-plt.title('میانگین فروش بر اساس آیتم')
-plt.xlabel('آیتم')
-plt.ylabel('میانگین فروش')
-plt.show()
+plt.title('Distribution of Stores')
 
+plt.xlabel('Store')
+
+plt.ylabel('Count')
+
+# plt.show()
+
+plt.figure(figsize=(10, 6))
+
+item_counts.plot(kind='bar', color='lightgreen')
+
+plt.title('Distribution of Items')
+
+plt.xlabel('Item')
+
+plt.ylabel('Count')
+
+# plt.show()
+
+daily_counts = Data['date'].value_counts().sort_index()
+
+# print("Daily record counts:\n", daily_counts.head())

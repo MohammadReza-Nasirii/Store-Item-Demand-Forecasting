@@ -63,18 +63,20 @@ item_counts = Data['item'].value_counts()
 
 # print("Daily record counts:\n", daily_counts.head())
 
-# Data.to_csv('../DataSet/enhanced_train.csv', index=False)
+Data.to_csv('../DataSet/enhanced_train.csv', index=False)
 
-Data_2['date'] = pd.to_datetime(Data['date'])
+Data_2['date'] = pd.to_datetime(Data_2['date'])
 
-Data_2['month'] = Data['month']
+Data_2['month'] = Data_2['date'].dt.month
 
-Data_2['year'] = Data['year']
+Data_2['year'] = Data_2['date'].dt.year
 
-Data_2['is_weekend'] = Data['is_weekend']
+Data_2['is_weekend'] = (Data_2['date'].dt.dayofweek >= 5).astype(int)
 
-Data_2['month_day'] = Data_2['date'].dt.day
+Data_2['month_day'] = Data_2['date'].dt.strftime('%m-%d')
 
 print("Shape of dataset:", Data_2.shape)
 
 print(Data_2.head())
+
+Data_2.to_csv('../DataSet/enhanced_test.csv', index=False)

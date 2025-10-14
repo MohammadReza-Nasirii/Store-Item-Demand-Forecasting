@@ -1,5 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('TkAgg')
 import seaborn as sns
 
 df = pd.read_csv('DataSet/enhanced_train.csv')
@@ -45,6 +47,52 @@ sns.boxplot(y='sales', data=df, color='lightcoral')
 plt.title('Boxplot of Sales')
 
 plt.ylabel('Sales')
+
+plt.tight_layout()
+
+plt.show()
+
+sales_by_dow = df.groupby('day_of_week')['sales'].mean().reset_index()
+
+plt.figure(figsize=(8,4))
+
+sns.barplot(x='day_of_week', y='sales', data=sales_by_dow, palette='coolwarm')
+
+plt.title('Average Sales by Day of Week')
+
+plt.xlabel('Day of Week (0=Mon, 6=Sun)')
+
+plt.ylabel('Average Sales')
+
+plt.tight_layout()
+
+plt.show()
+
+sales_by_month = df.groupby('month')['sales'].mean().reset_index()
+
+plt.figure(figsize=(8,4))
+
+sns.lineplot(x='month', y='sales', data=sales_by_month, marker='o', color='teal')
+
+plt.title('Average Sales by Month')
+
+plt.xlabel('Month')
+
+plt.ylabel('Average Sales')
+
+plt.tight_layout()
+
+plt.show()
+
+numeric_cols = ['sales', 'day_of_week', 'is_weekend', 'month', 'year']
+
+corr_matrix = df[numeric_cols].corr(method='pearson')
+
+plt.figure(figsize=(8,6))
+
+sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', linewidths=0.5, fmt='.2f')
+
+plt.title('Correlation Heatmap of Numerical Features')
 
 plt.tight_layout()
 

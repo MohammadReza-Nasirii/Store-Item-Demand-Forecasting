@@ -90,10 +90,28 @@ corr_matrix = df[numeric_cols].corr(method='pearson')
 
 plt.figure(figsize=(8,6))
 
-sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', linewidths=0.5, fmt='.2f')
+sns.heatmap(corr_matrix, annot=True, cmap='cool', linewidths=0.5, fmt='.2f')
 
 plt.title('Correlation Heatmap of Numerical Features')
 
 plt.tight_layout()
+
+plt.show()
+
+Q = df['sales'].describe()
+
+Q1 = df['sales'].quantile(0.25)
+
+Q3 = df['sales'].quantile(0.75)
+
+IQR = Q3 - Q1
+
+Lower = Q1 - 1.5 * IQR
+
+Upper = Q3 + 1.5 * IQR
+
+Outliers = df[(df['sales'] < Lower) | (df['sales'] > Upper)]
+
+sns.boxplot(y='sales',  data=df)
 
 plt.show()

@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.tsa.stattools import adfuller
+
 
 df = pd.read_csv('../DataSet/features_v1.csv')
 
@@ -18,5 +20,8 @@ test['sales_diff_seasonal'] = test['sales_log'].diff(7)
 
 test = test.dropna()
 
-print(test[['sales', 'sales_log', 'sales_diff', 'sales_diff_seasonal']].head(10))
+result = adfuller(test['sales_diff_seasonal'], autolag='AIC')
+
+# print('p-value : ',result[1])
+
 

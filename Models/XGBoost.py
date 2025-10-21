@@ -1,6 +1,8 @@
 import pandas as pd
-import XGboost as xgb
-import sklearn as sk
+from xgboost import XGBRegressor
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+import numpy as np
+
 
 test = pd.read_csv('../DataSet/features_v1.csv')
 
@@ -14,6 +16,25 @@ X = test[feature_cols]
 
 y = test['sales']
 
-print(X.head())
+split_date = '2017-10-31'
+
+X_train = X.loc[test['date'] <= split_date]
+
+y_train = y.loc[test['date'] <= split_date]
+
+X_test = X.loc[test['date'] > split_date]
+
+y_test = y.loc[test['date'] > split_date]
+
+model = XGBRegressor(random_state=42)
+
+preds = model.predict(X_test)
+
+mae = mean_absolute_error(y_test, preds)
+
+rmse = np.sqrt(mean_squared_error(y_test, preds))
+
+print(f"MAE: {mae:.2f}, RMSE: {rmse:.2f}")
+
 
 

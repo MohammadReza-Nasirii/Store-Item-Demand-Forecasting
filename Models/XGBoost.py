@@ -2,6 +2,9 @@ import pandas as pd
 from xgboost import XGBRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
 
 
 test = pd.read_csv('../DataSet/features_v1.csv')
@@ -34,7 +37,23 @@ mae = mean_absolute_error(y_test, preds)
 
 rmse = np.sqrt(mean_squared_error(y_test, preds))
 
-print(f"MAE: {mae:.2f}, RMSE: {rmse:.2f}")
+# print(f"MAE: {mae:.2f}, RMSE: {rmse:.2f}")
+
+importances = model.feature_importances_
+
+feature_importance_df = pd.DataFrame({
+    'Feature': X.columns,
+    'Importance': importances
+}).sort_values(by='Importance', ascending=False)
+
+print(feature_importance_df.head())
+
+plt.figure(figsize=(10,5))
+sns.barplot(x='Importance', y='Feature', data=feature_importance_df, palette='viridis')
+plt.title('Feature Importance - XGBoost Model')
+plt.tight_layout()
+plt.show()
+
 
 
 

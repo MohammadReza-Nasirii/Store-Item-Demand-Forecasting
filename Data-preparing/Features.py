@@ -50,5 +50,5 @@ import numpy as np
 
 df2 = pd.read_csv('../DataSet/features_v1.csv')
 
-print(df2.head())
+print(df2.info())
 

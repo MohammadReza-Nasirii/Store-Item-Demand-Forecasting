@@ -1,6 +1,7 @@
 import pandas as pd
 from xgboost import XGBRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error
+from sklearn.model_selection import RandomizedSearchCV
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
@@ -51,11 +52,35 @@ feature_importance_df = pd.DataFrame({
 print(test.head())
 
 plt.figure(figsize=(10,5))
+
 sns.barplot(x='Importance', y='Feature', data=feature_importance_df, palette='viridis')
+
 plt.title('Feature Importance - XGBoost Model')
+
 plt.tight_layout()
-plt.show()
 
+# plt.show()
 
+param_dist = {
+    'n_estimators': [100, 200, 300],
+    'learning_rate': [0.01, 0.05, 0.1],
+    'max_depth': [3, 5, 7],
+    'subsample': [0.8, 1.0],
+    'colsample_bytree': [0.8, 1.0]
+}
 
+random_search = RandomizedSearchCV(
+    model,
+    param_distributions=param_dist,
+    n_iter=10,
+    scoring='neg_mean_absolute_error',
+    cv=3,
+    random_state=42,
+    n_jobs=-1
+)
 
+random_search.fit(X_train, y_train)
+
+print("Best Parameters:", random_search.best_params_)
+
+print("Best Score:", -random_search.best_score_)

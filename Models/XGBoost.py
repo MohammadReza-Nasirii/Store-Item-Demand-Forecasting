@@ -126,13 +126,38 @@ for next_date in future_dates:
 # --- Combine future predictions with future dates ---
 future_df = pd.DataFrame({'date': future_dates, 'predicted_sales': future_preds})
 
-# --- Plot the result ---
-plt.figure(figsize=(10, 5))
-plt.plot(data['date'], data['sales'], label='Actual Sales', color='blue')
-plt.plot(future_df['date'], future_df['predicted_sales'], label='Forecasted Sales', color='orange')
-plt.title('30-Day Future Sales Forecast (XGBoost)')
-plt.xlabel('Date')
-plt.ylabel('Sales')
-plt.legend()
+# # --- Plot the result ---
+# plt.figure(figsize=(10, 5))
+# plt.plot(data['date'], data['sales'], label='Actual Sales', color='blue')
+# plt.plot(future_df['date'], future_df['predicted_sales'], label='Forecasted Sales', color='orange')
+# plt.title('30-Day Future Sales Forecast (XGBoost)')
+# plt.xlabel('Date')
+# plt.ylabel('Sales')
+# plt.legend()
+# plt.tight_layout()
+# plt.show()
+
+# --- Save the trained XGBoost model ---
+model_final.save_model('../Models/xgboost_final_model.json')
+print("✅ Model saved successfully!")
+
+# --- Save future predictions ---
+future_df.to_csv('../DataSet/xgboost_future_predictions.csv', index=False)
+print("✅ Future predictions saved to CSV!")
+
+print("\n📊 Model Summary:")
+print(f"Training data used up to: {data['date'].max().date()}")
+print(f"Forecasting days ahead: {len(future_df)}")
+print(f"MAE: {mae:.2f}")
+print(f"RMSE: {rmse:.2f}")
+
+# --- Error visualization ---
+errors = y_test.values - preds
+plt.figure(figsize=(10, 4))
+plt.hist(errors, bins=30, color='skyblue', edgecolor='black')
+plt.title('Distribution of Prediction Errors (XGBoost)')
+plt.xlabel('Error (Actual - Predicted)')
+plt.ylabel('Frequency')
 plt.tight_layout()
 plt.show()
+
